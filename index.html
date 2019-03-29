@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<title>从服务器获取或设置Header的值</title>
+</head>
+
+<body>
+	<h3>Header中会话参数(SID)的获取和设置</h3>
+	<img id="code" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAAAYCAIAAACDYM+5AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAABISURBVFhH7dAxAQAwEAOh+rcVY7Xwt4ME3jiTFcgKZAWyAlmBrEBWICuQFcgKZAWyAlmBrEBWICuQFcgKZAWyAlmBrEDW2fYB7cJtnPXgYPQAAAAASUVORK5CYII=" alt="Verification code" >
+	<br />
+	<button type="button" onclick="getcodeimg()">GET SID</button>
+	<br />
+	<br />
+	<div style="border:1px solid #ccc;padding:20px;">
+		<span id="status"></span><br />
+		<strong><span id="sid"></span></strong>
+	</div>
+	<script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.js"></script>
+	<script src="./js/jquery-ajax-blob-arraybuffer.js"></script>
+	<script type="text/javascript">
+		function getcodeimg() {
+			console.log('Get Code')
+			$.ajax({
+				type: "GET",
+				headers: {
+					Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8'
+				},
+				dataType: 'blob',
+				url: "https://api.lbtc.io/genvercode",
+				success: function (data, status, res) {
+					var reader = new window.FileReader();
+					reader.readAsDataURL(data);
+					reader.onloadend = function () {
+						$("#code").attr('src', reader.result);
+						$("#code").attr('data-uid', res.getResponseHeader('Content-Type').split(",")[1]);
+					};
+					$('#status').html(status);
+					$('#sid').html(res.getResponseHeader('Content-Type').split(",")[1]);
+					console.warn('< -- -- -- -- -- -- >')
+					console.log(res.getAllResponseHeaders())
+				}
+			})
+		};
+
+		$('#code').bind("click", function () {
+			getcodeimg();
+		});
+
+		getcodeimg();
+	</script>
+</body>
+
+</html>
